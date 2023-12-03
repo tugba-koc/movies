@@ -30,8 +30,9 @@ public class ReviewManager implements ReviewService {
     public void add(CreateReviewRequest createReviewRequest) {
         /*this.brandBusinessRules.checkIfBrandNameAlreadyExists(createBrandRequest.getName());*/
         Review review = this.modelMapperService.forRequest().map(createReviewRequest,Review.class);
-        /*this.reviewRepository.insert(review);*/
+        this.reviewRepository.insert(review);
 
+        // send data to movie collection
         mongoTemplate.update(Movie.class)
                 .matching(Criteria.where("imdbId").is(createReviewRequest.getImdbId()))
                 .apply(new Update().push("reviewIds").value(review))

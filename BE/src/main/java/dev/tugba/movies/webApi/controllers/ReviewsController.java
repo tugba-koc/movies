@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewsController {
     private ReviewService reviewService;
 
+    // TODO : success mesajı dön HTTP RESPONSE
     @PostMapping()
+    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     @ResponseStatus(code= HttpStatus.CREATED)
     public void add(@RequestBody() CreateReviewRequest createReviewRequest){
         this.reviewService.add(createReviewRequest);

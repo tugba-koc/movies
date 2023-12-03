@@ -25,6 +25,8 @@ public class MovieManager implements MovieService {
     public MovieManager(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }
+    // TODO : pagination
+
     @Override
     public List<GetAllMoviesResponse> getAllMovies() {
 
