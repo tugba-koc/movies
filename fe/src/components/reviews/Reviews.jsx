@@ -1,13 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import ReviewForm from '../reviewForm/ReviewForm';
-import api from '@api/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { v4 as uuidv4 } from 'uuid';
 
-const Reviews = ({ getMovieData, reviews, setReviews, movie }) => {
+import {
+  addReviewController,
+  handleDeleteReviewController,
+} from '../../controllers';
+
+const Reviews = ({ getMovieData, reviews, movie }) => {
   const [error, setError] = useState();
   const revText = useRef();
   const params = useParams();
@@ -18,29 +21,20 @@ const Reviews = ({ getMovieData, reviews, setReviews, movie }) => {
   }, []);
 
   const handleDeleteReview = async (reviewId, imdbId) => {
-    console.log('reviewId', reviewId);
-    try {
-      await api.delete(`/api/reviews/${imdbId}?reviewId=${reviewId}`);
-    } catch (error) {
-      console.error(error);
-    }
+    handleDeleteReviewController(reviewId, imdbId)
+      .then(() => {
+        getMovieData(movieId);
+      })
+      .catch((err) => setError(err));
   };
 
   const addReview = async (e) => {
     e.preventDefault();
-    console.log(uuidv4().toString().replaceAll('-', ''), 'uuidv4().toString()');
 
     try {
       const revBody = revText.current;
-
-      await api.post('/api/reviews', {
-        reviewBody: revBody.value,
-        imdbId: movieId,
-        reviewId: uuidv4().toString().replaceAll('-', ''),
-      });
-      const updatedReviews = [...reviews, { body: revBody.value }];
-
-      setReviews(updatedReviews);
+      await addReviewController(revBody, movieId);
+      getMovieData(movieId);
     } catch (error) {
       setError('please try again');
     } finally {

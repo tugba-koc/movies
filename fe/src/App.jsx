@@ -1,20 +1,19 @@
-import api from '@api/axiosConfig';
 import { useState } from 'react';
 import RouteManagement from './route/RouteManagement';
+import { getMovieDataController } from './controllers';
 
 function App() {
   const [movie, setMovie] = useState();
   const [reviews, setReviews] = useState();
   const [error, setError] = useState();
 
-  const getMovieData = async (movieId) => {
-    try {
-      const response = await api.get(`/api/movies/${movieId}`);
-      setMovie(response.data);
-      setReviews(response.data.reviewIds);
-    } catch (error) {
-      setError(error);
-    }
+  const getMovieData = (imdbId) => {
+    getMovieDataController(imdbId)
+      .then((response) => {
+        setMovie(response.data);
+        setReviews(response.data.reviewIds);
+      })
+      .catch((err) => setError(err));
   };
 
   return (
