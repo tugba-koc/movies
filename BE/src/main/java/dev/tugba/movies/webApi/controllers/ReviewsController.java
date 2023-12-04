@@ -21,7 +21,7 @@ public class ReviewsController {
     }
 
     @DeleteMapping("/{imdbId}")
-    @ResponseStatus(code= HttpStatus.ACCEPTED)
+    @ResponseStatus(code= HttpStatus.OK)
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public void delete(@RequestParam("reviewId") String reviewId, @PathVariable String imdbId){
         this.reviewService.delete(reviewId, imdbId);
