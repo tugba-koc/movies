@@ -7,14 +7,19 @@ import dev.tugba.movies.dataAccess.abstracts.ReviewRepository;
 import dev.tugba.movies.entities.concretes.Movie;
 import dev.tugba.movies.entities.concretes.Review;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ReviewManager implements ReviewService {
+    private final int PAGE_SIZE = 5;
+    
     private ReviewRepository reviewRepository;
 
     @Autowired
@@ -50,5 +55,11 @@ public class ReviewManager implements ReviewService {
                 .matching(Criteria.where("imdbId").is(imdbId))
                 .apply(new Update().pull("reviewIds", Query.query(Criteria.where("reviewId").is(review.getReviewId()))))
                 .first();
+    }
+
+    @Override
+    public Page<Review> findAllReviewWithPage(int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        return this.reviewRepository.findAll(pageable);
     }
 }

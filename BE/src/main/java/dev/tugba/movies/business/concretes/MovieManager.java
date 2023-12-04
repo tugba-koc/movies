@@ -6,7 +6,6 @@ import dev.tugba.movies.business.responses.GetByIdMovieResponse;
 import dev.tugba.movies.core.utilities.mappers.ModelMapperService;
 import dev.tugba.movies.dataAccess.abstracts.MovieRepository;
 import dev.tugba.movies.entities.concretes.Movie;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,6 @@ public class MovieManager implements MovieService {
     public MovieManager(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }
-    // TODO : pagination
 
     @Override
     public List<GetAllMoviesResponse> getAllMovies() {
