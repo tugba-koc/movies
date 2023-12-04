@@ -19,6 +19,15 @@ export const handleDeleteReviewController = async (reviewId, imdbId) => {
   }
 };
 
+export const handleReviewsPaginatedController = async (movieId, pageNumber) => {
+  try {
+    let response = await api.get(`/api/reviews/${movieId}?page=${pageNumber}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const addReviewController = async (revBody, movieId) => {
   const REVIEW_ID = uuidv4().toString().replaceAll('-', '');
   try {

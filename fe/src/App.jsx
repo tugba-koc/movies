@@ -11,7 +11,6 @@ function App() {
     getMovieDataController(imdbId)
       .then((response) => {
         setMovie(response.data);
-        setReviews(response.data.reviewIds);
       })
       .catch((err) => setError(err));
   };
