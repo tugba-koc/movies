@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/reviews")
 @AllArgsConstructor
@@ -21,4 +20,10 @@ public class ReviewsController {
         this.reviewService.add(createReviewRequest);
     }
 
+    @DeleteMapping("/{imdbId}")
+    @ResponseStatus(code= HttpStatus.ACCEPTED)
+    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
+    public void delete(@RequestParam("reviewId") String reviewId, @PathVariable String imdbId){
+        this.reviewService.delete(reviewId, imdbId);
+    }
 }

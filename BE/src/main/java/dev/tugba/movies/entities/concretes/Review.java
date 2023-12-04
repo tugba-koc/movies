@@ -16,4 +16,6 @@ public class Review {
     private ObjectId id;
 
     private String body;
+
+    private String reviewId;
 }

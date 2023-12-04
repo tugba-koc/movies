@@ -4,4 +4,5 @@ import dev.tugba.movies.business.requests.CreateReviewRequest;
 
 public interface ReviewService {
     void add(CreateReviewRequest createReviewRequest);
+    void delete(String reviewId, String imdbId);
 }

@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CreateReviewRequest {
     private String imdbId;
     private String reviewBody;
+    private String reviewId;
 }

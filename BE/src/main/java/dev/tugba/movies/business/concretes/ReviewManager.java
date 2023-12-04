@@ -9,6 +9,7 @@ import dev.tugba.movies.entities.concretes.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,18 @@ public class ReviewManager implements ReviewService {
         mongoTemplate.update(Movie.class)
                 .matching(Criteria.where("imdbId").is(createReviewRequest.getImdbId()))
                 .apply(new Update().push("reviewIds").value(review))
+                .first();
+    }
+
+    @Override
+    public void delete(String reviewId, String imdbId) {
+        Review review = this.reviewRepository.findByReviewId(reviewId).orElseThrow();
+        this.reviewRepository.delete(review);
+
+        // remove data from movie collection
+        mongoTemplate.update(Movie.class)
+                .matching(Criteria.where("imdbId").is(imdbId))
+                .apply(new Update().pull("reviewIds", Query.query(Criteria.where("reviewId").is(review.getReviewId()))))
                 .first();
     }
 }
