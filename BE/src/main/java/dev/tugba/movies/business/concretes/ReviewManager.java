@@ -34,15 +34,18 @@ public class ReviewManager implements ReviewService {
 
     @Override
     public void add(CreateReviewRequest createReviewRequest) {
-        /*this.brandBusinessRules.checkIfBrandNameAlreadyExists(createBrandRequest.getName());*/
+        /* this.brandBusinessRules.checkIfBrandNameAlreadyExists(createBrandRequest.getName()); */
         Review review = this.modelMapperService.forRequest().map(createReviewRequest,Review.class);
         this.reviewRepository.insert(review);
 
-        // send data to movie collection
-        mongoTemplate.update(Movie.class)
+        // send data to movie collection for reviewIds 
+        // this is not an efficient way, because a review collection has already created on mongodb
+        // and send data to just review collection is enough.
+        // no need to store review data on 2 collections
+        /* mongoTemplate.update(Movie.class)
                 .matching(Criteria.where("imdbId").is(createReviewRequest.getImdbId()))
                 .apply(new Update().push("reviewIds").value(review))
-                .first();
+                .first(); */
     }
 
     @Override
@@ -58,8 +61,14 @@ public class ReviewManager implements ReviewService {
     }
 
     @Override
-    public Page<Review> findAllReviewWithPage(int page) {
+    public Page<Review> findAllReviewWithPageByImdbId(String imdbId, int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
-        return this.reviewRepository.findAll(pageable);
+        return this.reviewRepository.findAllByImdbId(imdbId, pageable);
+    }
+
+    @Override
+    public Page<Review> findAllReviewBodyWithPageByBody(String imdbId, String query, int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        return this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable);
     }
 }

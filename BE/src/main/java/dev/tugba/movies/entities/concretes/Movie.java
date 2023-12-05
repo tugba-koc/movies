@@ -1,6 +1,5 @@
 package dev.tugba.movies.entities.concretes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -23,8 +22,4 @@ public class Movie {
     private List<String> genres;
     private String poster;
     private List<String> backdrops;
-
-    /*@OneToMany(mappedBy = "brand")*/
-    @JsonIgnore
-    private List<Review> reviewIds;
 }

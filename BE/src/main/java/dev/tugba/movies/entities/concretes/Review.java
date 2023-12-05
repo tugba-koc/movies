@@ -21,4 +21,6 @@ public class Review {
     private String body;
 
     private String reviewId;
+
+    private String imdbId;
 }

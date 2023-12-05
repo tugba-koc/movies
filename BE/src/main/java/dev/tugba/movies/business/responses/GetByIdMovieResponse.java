@@ -17,5 +17,4 @@ public class GetByIdMovieResponse {
     private String title;
     private String imdbId;
     private String poster;
-    private List<Review> reviewIds;
 }

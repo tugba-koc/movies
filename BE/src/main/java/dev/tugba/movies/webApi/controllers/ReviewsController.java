@@ -22,11 +22,20 @@ public class ReviewsController {
         this.reviewService.add(createReviewRequest);
     }
 
+    /* api.get(`/api/reviews/${movieId}?page=${page}`); */
     @GetMapping("/{imdbId}")
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     @ResponseStatus(code= HttpStatus.OK)
-    public Page<Review> findAllReviewWithPagination(@RequestParam(value = "page") int page){
-        return this.reviewService.findAllReviewWithPage(page);
+    public Page<Review> findAllReviewWithPagination(@PathVariable String imdbId, @RequestParam(value = "page") int page){
+        return this.reviewService.findAllReviewWithPageByImdbId(imdbId, page);
+    }
+
+    /* api.get(`/api/reviews/${movieId}?query=${query}&page=${page}`); */
+    @PostMapping("/{imdbId}")
+    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
+    @ResponseStatus(code= HttpStatus.OK)
+    public Page<Review> findByReviewBodyWithPagination(@PathVariable String imdbId, @RequestParam(value = "query") String query, @RequestParam(value = "page") int page){
+        return this.reviewService.findAllReviewBodyWithPageByBody(imdbId, query, page);
     }
 
     @DeleteMapping("/{imdbId}")
