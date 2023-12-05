@@ -11,18 +11,29 @@ export const getMovieDataController = async (movieId) => {
   }
 };
 
-export const handleDeleteReviewController = async (reviewId, imdbId) => {
+export const handleReviewsPaginatedController = async (movieId, pageNumber) => {
   try {
-    await api.delete(`/api/reviews/${imdbId}?reviewId=${reviewId}`);
+    let response = await api.get(`/api/reviews/${movieId}?page=${pageNumber}`);
+    return response.data;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const handleReviewsPaginatedController = async (movieId, pageNumber) => {
+export const handleFilterQueryController = async (movieId, query, page) => {
   try {
-    let response = await api.get(`/api/reviews/${movieId}?page=${pageNumber}`);
+    let response = await api.post(
+      `/api/reviews/${movieId}?query=${query}&page=${page}`
+    );
     return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const handleDeleteReviewController = async (reviewId, imdbId) => {
+  try {
+    await api.delete(`/api/reviews/${imdbId}?reviewId=${reviewId}`);
   } catch (error) {
     console.error(error);
   }

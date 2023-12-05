@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import ReviewForm from '../reviewForm/ReviewForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,41 +8,48 @@ import { useNavigate } from 'react-router-dom';
 import {
   addReviewController,
   handleDeleteReviewController,
-  handleReviewsPaginatedController,
+  handleFilterQueryController,
 } from '../../controllers';
 
 const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
   const [error, setError] = useState();
-  const revText = useRef();
-  const params = useParams();
-  const navigate = useNavigate();
-
-  const movieId = params.movieId;
+  const [query, setQuery] = useState('');
   const [paginationPage, setPaginationPage] = useState(0);
   const [totalReviewsPage, setTotalReviewsPage] = useState();
+
+  const revText = useRef();
+  const queryRef = useRef();
+
+  const navigate = useNavigate();
+
+  const params = useParams();
+  const movieId = params.movieId;
 
   useEffect(() => {
     getMovieData(movieId);
   }, []);
 
   useEffect(() => {
-    handleReviewsPaginated(paginationPage);
+    handleFilterAndPagination(query, paginationPage);
   }, []);
 
-  const handleReviewsPaginated = (paginationPage) => {
-    handleReviewsPaginatedController(movieId, paginationPage)
-      .then((response) => {
+  const handleFilterAndPagination = async (query, page) => {
+    try {
+      const query = queryRef.current.value;
+      let response = await handleFilterQueryController(movieId, query, page);
+      if (response) {
         setReviews(response?.content);
         setTotalReviewsPage(response?.totalPages);
-      })
-      .catch((err) => setError(err));
+      }
+    } catch (error) {
+      console.log('error happened');
+    }
   };
 
   const handleDeleteReview = async (reviewId, imdbId) => {
     try {
       await handleDeleteReviewController(reviewId, imdbId);
-      await getMovieData(movieId);
-      await handleReviewsPaginated(paginationPage);
+      await handleFilterAndPagination(query, paginationPage);
     } catch (error) {
       setError('please try again');
     }
@@ -54,8 +61,7 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
     try {
       const revBody = revText.current;
       await addReviewController(revBody, movieId);
-      await getMovieData(movieId);
-      await handleReviewsPaginated(paginationPage);
+      await handleFilterAndPagination(query, paginationPage);
     } catch (error) {
       setError('please try again');
     } finally {
@@ -94,6 +100,19 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
                 </Row>
               </>
             }
+            <Row>
+              <Form.Control
+                className='mt-2 mb-4'
+                placeholder='Write a query ...'
+                ref={queryRef}
+                onChange={() =>
+                  handleFilterAndPagination(
+                    queryRef.current.value,
+                    paginationPage
+                  )
+                }
+              />
+            </Row>
             {reviews?.map((review) => {
               return (
                 <>
@@ -126,7 +145,7 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
                       className='mx-2'
                       key={number}
                       onClick={() => {
-                        handleReviewsPaginated(number - 1);
+                        handleFilterAndPagination(query, number - 1);
                         navigate(`?page=${number}`);
                       }}
                     >
