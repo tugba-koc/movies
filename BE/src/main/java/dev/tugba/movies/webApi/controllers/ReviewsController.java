@@ -22,26 +22,36 @@ public class ReviewsController {
         this.reviewService.add(createReviewRequest);
     }
 
-    /* api.get(`/api/reviews/${movieId}?page=${page}`); */
-    @GetMapping("/{imdbId}")
-    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    @ResponseStatus(code= HttpStatus.OK)
-    public Page<Review> findAllReviewWithPagination(@PathVariable String imdbId, @RequestParam(value = "page") int page){
-        return this.reviewService.findAllReviewWithPageByImdbId(imdbId, page);
-    }
-
-    /* api.get(`/api/reviews/${movieId}?query=${query}&page=${page}`); */
-    @PostMapping("/{imdbId}")
-    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    @ResponseStatus(code= HttpStatus.OK)
-    public Page<Review> findByReviewBodyWithPagination(@PathVariable String imdbId, @RequestParam(value = "query") String query, @RequestParam(value = "page") int page){
-        return this.reviewService.findAllReviewBodyWithPageByBody(imdbId, query, page);
-    }
-
     @DeleteMapping("/{imdbId}")
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     @ResponseStatus(code= HttpStatus.OK)
     public void delete(@RequestParam(value = "reviewId") String reviewId, @PathVariable String imdbId){
         this.reviewService.delete(reviewId, imdbId);
+    }
+
+    // it can be removed
+    /* api.get(`/api/reviews/${movieId}?page=${page}`); */
+/*     @GetMapping("/{imdbId}")
+    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
+    @ResponseStatus(code= HttpStatus.OK)
+    public Page<Review> findAllReviewWithPagination(@PathVariable String imdbId, @RequestParam(value = "page") int page){
+        return this.reviewService.findAllReviewWithPageByImdbId(imdbId, page);
+    } */
+
+    // it can be removed
+    /* api.post(`/api/reviews/${movieId}?query=${query}&page=${page}`); */
+    /* @PostMapping("/{imdbId}")
+    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
+    @ResponseStatus(code= HttpStatus.OK)
+    public Page<Review> findByReviewBodyWithPagination(@PathVariable String imdbId, @RequestParam(value = "query") String query, @RequestParam(value = "page") int page){
+        return this.reviewService.findAllReviewBodyWithPageByBody(imdbId, query, page);
+    } */
+
+    /* api.get(`/api/reviews/${movieId}?sst=${BODY_BY_DESC}&query=${query}&page=${page}`); */
+    @GetMapping("/{imdbId}")
+    @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
+    @ResponseStatus(code= HttpStatus.OK)
+    public Page<Review> sortAllReviewBodyByDescWithPagination(@PathVariable String imdbId, @RequestParam(value = "sst") String sortType, @RequestParam(value = "query") String query, @RequestParam(value = "page") int page){
+        return this.reviewService.sortAllReviewBodyByDescWithPagination(imdbId, sortType, query, page);
     }
 }

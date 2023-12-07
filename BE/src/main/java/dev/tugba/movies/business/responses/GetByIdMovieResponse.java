@@ -1,13 +1,11 @@
 package dev.tugba.movies.business.responses;
 
-import dev.tugba.movies.entities.concretes.Review;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
-import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

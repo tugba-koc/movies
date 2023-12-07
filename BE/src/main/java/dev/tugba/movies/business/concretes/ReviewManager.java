@@ -15,10 +15,11 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class ReviewManager implements ReviewService {
-    private final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 5;
     
     private ReviewRepository reviewRepository;
 
@@ -69,6 +70,21 @@ public class ReviewManager implements ReviewService {
     @Override
     public Page<Review> findAllReviewBodyWithPageByBody(String imdbId, String query, int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        return this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable);
+    }
+
+    @Override
+    public Page<Review> sortAllReviewBodyByDescWithPagination(String imdbId, String sortType, String query, int page) {
+        if("".equals(sortType)){
+            Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+            return this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable);
+        }
+        
+        Sort.Direction direction = Sort.Direction.ASC;
+        if ("DESC".equals(sortType)) {
+            direction = Sort.Direction.DESC;
+        }
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(direction, "body"));
         return this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable);
     }
 }
