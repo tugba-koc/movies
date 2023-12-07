@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import ReviewForm from '../reviewForm/ReviewForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   addReviewController,
   handleDeleteReviewController,
-  handleFilterQueryController,
+  handleFilterQueryAndSortController,
 } from '../../controllers';
 
 const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
@@ -16,6 +16,7 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
   const [query, setQuery] = useState('');
   const [paginationPage, setPaginationPage] = useState(0);
   const [totalReviewsPage, setTotalReviewsPage] = useState();
+  const [sortType, setSortType] = useState('');
 
   const revText = useRef();
   const queryRef = useRef();
@@ -30,13 +31,18 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
   }, []);
 
   useEffect(() => {
-    handleFilterAndPagination(query, paginationPage);
+    handleFilterSortAndPagination(sortType, query, paginationPage);
   }, []);
 
-  const handleFilterAndPagination = async (query, page) => {
+  const handleFilterSortAndPagination = async (sortType, query, page) => {
     try {
       const query = queryRef.current.value;
-      let response = await handleFilterQueryController(movieId, query, page);
+      let response = await handleFilterQueryAndSortController(
+        movieId,
+        sortType,
+        query,
+        page
+      );
       if (response) {
         setReviews(response?.content);
         setTotalReviewsPage(response?.totalPages);
@@ -49,7 +55,7 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
   const handleDeleteReview = async (reviewId, imdbId) => {
     try {
       await handleDeleteReviewController(reviewId, imdbId);
-      await handleFilterAndPagination(query, paginationPage);
+      await handleFilterSortAndPagination(sortType, query, paginationPage);
     } catch (error) {
       setError('please try again');
     }
@@ -61,12 +67,22 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
     try {
       const revBody = revText.current;
       await addReviewController(revBody, movieId);
-      await handleFilterAndPagination(query, paginationPage);
+      await handleFilterSortAndPagination(sortType, query, paginationPage);
     } catch (error) {
       setError('please try again');
     } finally {
       const revBody = revText.current;
       revBody.value = '';
+    }
+  };
+
+  const handleSort = (sortType) => {
+    if (sortType === 'DESC') {
+      setSortType('DESC');
+      handleFilterSortAndPagination('DESC', query, paginationPage);
+    } else if (sortType === 'ASC') {
+      setSortType('ASC');
+      handleFilterSortAndPagination('ASC', query, paginationPage);
     }
   };
 
@@ -100,17 +116,35 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
                 </Row>
               </>
             }
+            <div className='flex justify-end'>
+              <Dropdown>
+                <Dropdown.Toggle variant='success' id='dropdown-basic'>
+                  Sort
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => handleSort('ASC')}>
+                    Asc
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleSort('DESC')}>
+                    Desc
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+
             <Row>
               <Form.Control
                 className='mt-2 mb-4'
                 placeholder='Write a query ...'
                 ref={queryRef}
-                onChange={() =>
-                  handleFilterAndPagination(
+                onChange={() => {
+                  handleFilterSortAndPagination(
+                    sortType,
                     queryRef.current.value,
                     paginationPage
-                  )
-                }
+                  );
+                }}
               />
             </Row>
             {reviews?.map((review) => {
@@ -145,7 +179,11 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
                       className='mx-2'
                       key={number}
                       onClick={() => {
-                        handleFilterAndPagination(query, number - 1);
+                        handleFilterSortAndPagination(
+                          sortType,
+                          query,
+                          number - 1
+                        );
                         navigate(`?page=${number}`);
                       }}
                     >
@@ -156,7 +194,6 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
             </div>
           </Col>
         </Row>
-
         <Row>
           <Col>
             <hr />

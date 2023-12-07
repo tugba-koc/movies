@@ -11,19 +11,16 @@ export const getMovieDataController = async (movieId) => {
   }
 };
 
-export const handleReviewsPaginatedController = async (movieId, pageNumber) => {
-  try {
-    let response = await api.get(`/api/reviews/${movieId}?page=${pageNumber}`);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
 
-export const handleFilterQueryController = async (movieId, query, page) => {
+export const handleFilterQueryAndSortController = async (
+  movieId,
+  sortType,
+  query,
+  page
+) => {
   try {
-    let response = await api.post(
-      `/api/reviews/${movieId}?query=${query}&page=${page}`
+    let response = await api.get(
+      `/api/reviews/${movieId}?sst=${sortType}&query=${query}&page=${page}`
     );
     return response.data;
   } catch (error) {

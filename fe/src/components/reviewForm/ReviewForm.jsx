@@ -1,4 +1,4 @@
-import { Form, Button, Alert } from 'react-bootstrap';
+import { Form, Button, Alert, Row } from 'react-bootstrap';
 
 const ReviewForm = ({ handleSubmit, revText, error }) => {
   return (
@@ -13,9 +13,13 @@ const ReviewForm = ({ handleSubmit, revText, error }) => {
         </Alert>
       ) : null}
 
-      <Button onClick={(e) => handleSubmit(e)} variant='outline-info'>
-        Submit
-      </Button>
+      <Row className='flex justify-between flex-nowrap'>
+        <div className='w-auto'>
+          <Button onClick={(e) => handleSubmit(e)} variant='outline-info'>
+            Submit
+          </Button>
+        </div>
+      </Row>
     </Form>
   );
 };
