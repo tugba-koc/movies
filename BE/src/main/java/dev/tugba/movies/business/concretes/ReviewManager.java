@@ -34,10 +34,11 @@ public class ReviewManager implements ReviewService {
     }
 
     @Override
-    public void add(CreateReviewRequest createReviewRequest) {
+    public CreateReviewRequest add(CreateReviewRequest createReviewRequest) {
         /* this.brandBusinessRules.checkIfBrandNameAlreadyExists(createBrandRequest.getName()); */
         Review review = this.modelMapperService.forRequest().map(createReviewRequest,Review.class);
         this.reviewRepository.insert(review);
+        return createReviewRequest;
 
         // send data to movie collection for reviewIds 
         // this is not an efficient way, because a review collection has already created on mongodb
