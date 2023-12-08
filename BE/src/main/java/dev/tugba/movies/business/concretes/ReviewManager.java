@@ -7,22 +7,16 @@ import dev.tugba.movies.core.utilities.exceptions.ReviewNotFoundException;
 import dev.tugba.movies.core.utilities.exceptions.constants.ErrorCodeConstants;
 import dev.tugba.movies.core.utilities.mappers.ModelMapperService;
 import dev.tugba.movies.dataAccess.abstracts.ReviewRepository;
-import dev.tugba.movies.entities.concretes.Movie;
 import dev.tugba.movies.entities.concretes.Review;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import org.springframework.util.StringUtils;
-
-
 
 @Service
 public class ReviewManager implements ReviewService {
@@ -39,6 +33,7 @@ public class ReviewManager implements ReviewService {
 
     @Override
     public CreateReviewRequest add(CreateReviewRequest createReviewRequest) {
+        // TODO: creating BusinessRules to handle errors
         /* this.brandBusinessRules.checkIfBrandNameAlreadyExists(createBrandRequest.getName()); */
         Review review = this.modelMapperService.forRequest().map(createReviewRequest,Review.class);
         Review insertedReview = this.reviewRepository.insert(review);
@@ -59,16 +54,16 @@ public class ReviewManager implements ReviewService {
 
     @Override
     public Page<Review> sortAllReviewBodyByDescWithPagination(String imdbId, String sortType, String query, int page) {
-        Pageable pageable;
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
     
-        if (!StringUtils.hasLength(sortType) || "ASC".equals(sortType)) {
+        if ("ASC".equals(sortType)) {
             pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "body"));
-        } else {
+        } else if("DESC".equals(sortType)) {
             pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "body"));
         }
     
         Optional<Page<Review>> reviewPageOptional = this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable);
     
-        return reviewPageOptional.orElseThrow(() -> new ReviewNotFoundException("err1092"));
+        return reviewPageOptional.orElseThrow(() -> new ReviewNotFoundException(ErrorCodeConstants.REVIEW_NOT_FOUND.getErrorCode()));
     }
 }

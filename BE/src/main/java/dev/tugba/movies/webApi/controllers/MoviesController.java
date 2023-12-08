@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -23,7 +22,7 @@ public class MoviesController {
 
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     @GetMapping("/{imdbId}")
-    public Optional<GetByIdMovieResponse> getById(@PathVariable String imdbId) {
+    public GetByIdMovieResponse getById(@PathVariable String imdbId) {
         return movieService.getById(imdbId);
     }
 }

@@ -3,6 +3,9 @@ package dev.tugba.movies.business.concretes;
 import dev.tugba.movies.business.abstracts.MovieService;
 import dev.tugba.movies.business.responses.GetAllMoviesResponse;
 import dev.tugba.movies.business.responses.GetByIdMovieResponse;
+import dev.tugba.movies.core.utilities.exceptions.MovieNotFoundException;
+import dev.tugba.movies.core.utilities.exceptions.NullException;
+import dev.tugba.movies.core.utilities.exceptions.constants.ErrorCodeConstants;
 import dev.tugba.movies.core.utilities.mappers.ModelMapperService;
 import dev.tugba.movies.dataAccess.abstracts.MovieRepository;
 import dev.tugba.movies.entities.concretes.Movie;
@@ -10,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,10 +40,14 @@ public class MovieManager implements MovieService {
     }
 
     @Override
-    public Optional<GetByIdMovieResponse> getById(String imdbId) {
-        Movie movie = this.movieRepository.findByImdbId(imdbId).orElseThrow(); // TODO: add exception handler for movie
+    public GetByIdMovieResponse getById(String imdbId) {
+        Movie movie = this.movieRepository.findByImdbId(imdbId).orElseThrow(() -> new MovieNotFoundException(ErrorCodeConstants.MOVIE_NOT_FOUND.getErrorCode()));
         GetByIdMovieResponse response = this.modelMapperService.forResponse().map(movie,GetByIdMovieResponse.class);
 
-        return Optional.ofNullable(response);
+        if(response == null){
+            ErrorCodeConstants errorCode = ErrorCodeConstants.NULL_EXCEPTION;
+            throw new NullException(errorCode.getErrorCode());
+        }
+        return response;
     }
 }

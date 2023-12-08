@@ -11,7 +11,6 @@ export const getMovieDataController = async (movieId) => {
   }
 };
 
-
 export const handleFilterQueryAndSortController = async (
   movieId,
   sortType,

@@ -4,9 +4,8 @@ import dev.tugba.movies.business.responses.GetAllMoviesResponse;
 import dev.tugba.movies.business.responses.GetByIdMovieResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MovieService {
     List<GetAllMoviesResponse> getAllMovies();
-    Optional<GetByIdMovieResponse> getById(String imdbId);
+    GetByIdMovieResponse getById(String imdbId);
 }
