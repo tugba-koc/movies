@@ -12,15 +12,16 @@ import {
 } from '../../controllers';
 
 const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
+  const TIME_OUT = 1000;
+
   const [error, setError] = useState();
   const [query, setQuery] = useState('');
+  const [text, setText] = useState('');
   const [paginationPage, setPaginationPage] = useState(0);
   const [totalReviewsPage, setTotalReviewsPage] = useState();
   const [sortType, setSortType] = useState('');
 
   const revText = useRef();
-  const queryRef = useRef();
-
   const navigate = useNavigate();
 
   const params = useParams();
@@ -30,13 +31,8 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
     getMovieData(movieId);
   }, []);
 
-  useEffect(() => {
-    handleFilterSortAndPagination(sortType, query, paginationPage);
-  }, []);
-
   const handleFilterSortAndPagination = async (sortType, query, page) => {
     try {
-      const query = queryRef.current.value;
       let response = await handleFilterQueryAndSortController(
         movieId,
         sortType,
@@ -85,6 +81,21 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
       handleFilterSortAndPagination('ASC', query, paginationPage);
     }
   };
+
+  const handleQuery = (e) => {
+    setText(e.target.value);
+    if (e.target.value !== ' ') {
+      setQuery(e.target.value.trim());
+    }
+  };
+
+  // debouncing to use server efficiently
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      handleFilterSortAndPagination(sortType, query, paginationPage);
+    }, TIME_OUT);
+    return () => clearTimeout(getData);
+  }, [query]);
 
   return (
     <>
@@ -137,13 +148,9 @@ const Reviews = ({ getMovieData, reviews, movie, setReviews }) => {
               <Form.Control
                 className='mt-2 mb-4'
                 placeholder='Write a query ...'
-                ref={queryRef}
-                onChange={() => {
-                  handleFilterSortAndPagination(
-                    sortType,
-                    queryRef.current.value,
-                    paginationPage
-                  );
+                value={text}
+                onChange={(e) => {
+                  handleQuery(e);
                 }}
               />
             </Row>
