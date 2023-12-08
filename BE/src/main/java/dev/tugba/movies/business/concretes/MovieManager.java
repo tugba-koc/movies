@@ -39,7 +39,7 @@ public class MovieManager implements MovieService {
 
     @Override
     public Optional<GetByIdMovieResponse> getById(String imdbId) {
-        Movie movie = this.movieRepository.findByImdbId(imdbId).orElseThrow();
+        Movie movie = this.movieRepository.findByImdbId(imdbId).orElseThrow(); // TODO: add exception handler for movie
         GetByIdMovieResponse response = this.modelMapperService.forResponse().map(movie,GetByIdMovieResponse.class);
 
         return Optional.ofNullable(response);

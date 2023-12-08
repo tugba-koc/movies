@@ -12,7 +12,6 @@ public class CreateReviewRequest {
     @NonNull
     private String imdbId;
 
-    @NonNull
     private String reviewBody;
 
     @NonNull

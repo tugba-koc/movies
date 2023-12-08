@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface ReviewRepository extends MongoRepository<Review, String> {
     Optional<Review> findByReviewId(String reviewId);
     Page<Review> findAllByImdbId(String imdbIb, Pageable pageable);
-    Page<Review> findByImdbIdAndBodyContaining(String imdbId, String query, Pageable pageable);
+    Optional<Page<Review>> findByImdbIdAndBodyContaining(String imdbId, String query, Pageable pageable);
 }
