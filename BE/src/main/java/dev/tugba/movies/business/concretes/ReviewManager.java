@@ -62,8 +62,8 @@ public class ReviewManager implements ReviewService {
             pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "body"));
         }
     
-        Optional<Page<Review>> reviewPageOptional = this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable);
+        Page<Review> reviewPageOptional = this.reviewRepository.findByImdbIdAndBodyContaining(imdbId, query, pageable).orElseThrow(() -> new ReviewNotFoundException(ErrorCodeConstants.REVIEW_NOT_FOUND.getErrorCode()));
     
-        return reviewPageOptional.orElseThrow(() -> new ReviewNotFoundException(ErrorCodeConstants.REVIEW_NOT_FOUND.getErrorCode()));
+        return reviewPageOptional;
     }
 }
